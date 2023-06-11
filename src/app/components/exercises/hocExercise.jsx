@@ -1,7 +1,26 @@
 import React from "react";
 import CollapseWrapper from "../common/collapse";
+import CardWrapper from "../common/Card";
+import PropTypes from "prop-types";
 
 const HocExercise = () => {
+    const SimpleComponent = ({ onLogin, onLogOut, isAuth }) => {
+        return (isAuth ? <button className="btn btn-secondary" onClick={onLogOut}>Выйти</button> : <button className="btn btn-primary" onClick={onLogin}>Войти</button>);
+    };
+    SimpleComponent.propTypes = {
+        onLogin: PropTypes.func,
+        onLogOut: PropTypes.func,
+        isAuth: PropTypes.string
+    };
+    const withFunctions = (Component) => props => {
+        return (
+            <CardWrapper>
+                <Component isAuth={localStorage.getItem("auth")} onLogin={() => localStorage.setItem("auth", "token")} onLogOut={() => localStorage.removeItem("auth")} />
+            </CardWrapper>
+        );
+    };
+    const ComponentWithHoc = withFunctions(SimpleComponent);
+
     return (
         <CollapseWrapper title="Упражнение">
             <p className="mt-3">
@@ -76,6 +95,7 @@ const HocExercise = () => {
                 <code>SimpleComponent</code> обновится после перезагрузки
                 страницы
             </p>
+            <ComponentWithHoc />
         </CollapseWrapper>
     );
 };
